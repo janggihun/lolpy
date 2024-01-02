@@ -27,6 +27,7 @@ def sql_execute(conn, query):
     cursor = conn.cursor()
     cursor.execute(query)
     result = cursor.fetchall()
+    
     return result
 
 
