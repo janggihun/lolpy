@@ -5,7 +5,7 @@ import random
 from tqdm import tqdm
 import time
 
-api_key = 'RGAPI-e674eb69-7d34-41d9-adfb-e43ad16950ca'
+api_key = 'RGAPI-e674eb69-7d34-41d9-adfb-e43ad16950ca' #본인걸로 바꾸기
 seoul_api_key = '494e45546661707037397647657252'
 
 
