@@ -115,11 +115,11 @@ def get_match_timeline_df(df):
                     tmp.append(df.iloc[i].matches['info']['participants'][j]['champExperience'])
                     tmp.append(df.iloc[i].matches['info']['participants'][j]['teamPosition'])
                     tmp.append(df.iloc[i].matches['info']['participants'][j]['teamId'])
-
-                    if j<5:
-                        tmp.append(df.iloc[i].matches['info']['teams'][0]['bans'][j+1]['championId'])
-                    else :
-                        tmp.append(df.iloc[i].matches['info']['teams'][1]['bans'][j+1]['championId'])
+                    
+                    if j < 5:                
+                        tmp.append(df.iloc[i].matches['info']['teams'][0]['bans'][j]['championId'])
+                    else:
+                        tmp.append(df.iloc[i].matches['info']['teams'][1]['bans'][j-5]['championId'])
 
 
                     tmp.append(df.iloc[i].timelines['info']['frames'][1]['events'][0]['participantId']) #가장빨리 템을 산사람이 이기는거 확인                                    
@@ -164,12 +164,7 @@ def get_match_timeline_df(df):
                     except:
                         tmp.append(0)    
 
-                       
-
-
-
-
-
+ 
                     df_creater.append(tmp)
                   
         except:

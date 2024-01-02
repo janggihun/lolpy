@@ -20,7 +20,7 @@ select * from cn_kr;
 
 -- insert into cn_kr value( 910 ,'흐웨이');
 
-select * from lol_datas;
+select * from lol_datas order by gameId;
 
 select *
 from lol_datas l
