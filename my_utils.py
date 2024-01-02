@@ -115,10 +115,25 @@ def get_match_timeline_df(df):
                     tmp.append(df.iloc[i].matches['info']['participants'][j]['champExperience'])
                     tmp.append(df.iloc[i].matches['info']['participants'][j]['teamPosition'])
                     tmp.append(df.iloc[i].matches['info']['participants'][j]['teamId'])
+
+                    if j<5:
+                        tmp.append(df.iloc[i].matches['info']['teams'][0]['bans'][j+1]['championId'])
+                    else :
+                        tmp.append(df.iloc[i].matches['info']['teams'][1]['bans'][j+1]['championId'])
+
+
                     tmp.append(df.iloc[i].timelines['info']['frames'][1]['events'][0]['participantId']) #가장빨리 템을 산사람이 이기는거 확인                                    
                     tmp.append(df.iloc[i].matches['info']['participants'][j]['win'])
                     tmp.append(df.iloc[i].matches['info']['participants'][j]['gameEndedInEarlySurrender']) # 15분 서렌 맨탈확인용  
-                    tmp.append(df.iloc[i].matches['info']['participants'][j]['firstBloodKill'])  # 첫번째 킬 누가 했는지 확인            
+                    tmp.append(df.iloc[i].matches['info']['participants'][j]['firstBloodKill'])  # 첫번째 킬 누가 했는지 확인       
+
+                    tmp.append(df.iloc[i].matches['info']['participants'][j]['doubleKills']) 
+                    tmp.append(df.iloc[i].matches['info']['participants'][j]['tripleKills']) 
+                    tmp.append(df.iloc[i].matches['info']['participants'][j]['quadraKills']) 
+                    tmp.append(df.iloc[i].matches['info']['participants'][j]['pentaKills']) 
+
+
+
                     tmp.append(df.iloc[i].matches['info']['participants'][j]['kills'])
                     tmp.append(df.iloc[i].matches['info']['participants'][j]['deaths'])
                     tmp.append(df.iloc[i].matches['info']['participants'][j]['assists'])
@@ -161,7 +176,7 @@ def get_match_timeline_df(df):
             print(i)
             continue
     columns = ['tier','gameId','gameDuration','gameVersion','summonerName','summonerLevel','participantId','championName','champLevel','champExperience',
-    'teamPosition','teamId', 'firstpurchased', 'win','gameEndedInEarlySurrender','firstBloodKill','kills','deaths','assists','kda','totalDamageDealtToChampions','totalDamageTaken','g_10','g_15','g_20','g_25']
+    'teamPosition','teamId','ban', 'firstpurchased', 'win','gameEndedInEarlySurrender','firstBloodKill','doubleKills','tripleKills','quadraKills','pentaKills','kills','deaths','assists','kda','totalDamageDealtToChampions','totalDamageTaken','g_10','g_15','g_20','g_25']
     df = pd.DataFrame(df_creater,columns = columns).drop_duplicates()
     print('df 제작이 완료되었습니다. 현재 df의 수는 %d 입니다'%len(df))
     return df    
@@ -172,20 +187,20 @@ def insert_matches_timeline_mysql(row,conn):
     # lambda를 이용해서 progress_apply를 통해 insert할 구문 만들기
     query = (
              f'insert into lol_datas(tier, gameId, gameDuration, gameVersion, summonerName, summonerLevel, participantId,'
-             f'championName, champLevel, champExperience, teamPosition, teamId, firstpurchased, win, gameEndedInEarlySurrender, firstBloodKill ,kills, deaths, assists,kda,'
+             f'championName, champLevel, champExperience, teamPosition, teamId,ban, firstpurchased, win, gameEndedInEarlySurrender, firstBloodKill,doubleKills,tripleKills,quadraKills,pentaKills, kills, deaths, assists,kda,'
              f'totalDamageDealtToChampions, totalDamageTaken,'
              f'g_10, g_15, g_20, g_25)'#우리조가 원하는 분당 총 골드량
              f'values(\'{row.tier}\',\'{row.gameId}\',{row.gameDuration}, \'{row.gameVersion}\', \'{row.summonerName}\','
              f'{row.summonerLevel}, {row.participantId},\'{row.championName}\',\'{row.champLevel}\' ,\'{row.champExperience}\','
-             f'\'{row.teamPosition}\', {row.teamId}, \'{row.firstpurchased}\', \'{row.win}\',\'{row.gameEndedInEarlySurrender}\',\'{row.firstBloodKill}\', {row. kills}, {row.deaths}, {row.assists},{row.kda},'
+             f'\'{row.teamPosition}\', {row.teamId},\'{row.ban}\', \'{row.firstpurchased}\', \'{row.win}\',\'{row.gameEndedInEarlySurrender}\',\'{row.firstBloodKill}\',\'{row.doubleKills}\', \'{row.tripleKills}\', \'{row.quadraKills}\', \'{row.pentaKills}\',  {row. kills}, {row.deaths}, {row.assists},{row.kda},'
              f'{row.totalDamageDealtToChampions},{row.totalDamageTaken},'
              f'{row.g_10},{row.g_15},{row.g_20},{row.g_25})'
            
              f'ON DUPLICATE KEY UPDATE '
              f'tier = \'{row.tier}\', gameId = \'{row.gameId}\', gameDuration = {row.gameDuration}, gameVersion = \'{row.gameVersion}\', summonerName= \'{row.summonerName}\','
              f'summonerLevel = {row.summonerLevel},participantId = {row.participantId},championName = \'{row.championName}\', champLevel = \'{row.champLevel}\','
-             f'champExperience = {row.champExperience}, teamPosition = \'{row.teamPosition}\', teamId = {row.teamId} , firstpurchased = \'{row.firstpurchased}\', win = \'{row.win}\', gameEndedInEarlySurrender = \'{row.gameEndedInEarlySurrender}\','
-             f'firstBloodKill = \'{row. firstBloodKill}\', kills = {row. kills}, deaths = {row.deaths}, assists = {row.assists}, kda = {row.kda},     totalDamageDealtToChampions = {row.totalDamageDealtToChampions},'
+             f'champExperience = {row.champExperience}, teamPosition = \'{row.teamPosition}\', teamId = {row.teamId} ,ban = \'{row.ban}\', firstpurchased = \'{row.firstpurchased}\', win = \'{row.win}\', gameEndedInEarlySurrender = \'{row.gameEndedInEarlySurrender}\','
+             f'firstBloodKill = \'{row. firstBloodKill}\',doubleKills = \'{row. doubleKills}\',tripleKills = \'{row. tripleKills}\',quadraKills = \'{row. quadraKills}\',pentaKills = \'{row. pentaKills}\', kills = {row. kills}, deaths = {row.deaths}, assists = {row.assists}, kda = {row.kda},     totalDamageDealtToChampions = {row.totalDamageDealtToChampions},'
              f'totalDamageTaken = {row.totalDamageTaken},'
              f'g_10 = {row.g_10},g_15 = {row.g_15},g_20 = {row.g_20},g_25 = {row.g_25}'
             )
