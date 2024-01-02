@@ -6,7 +6,7 @@ from tqdm import tqdm
 import time
 
 api_key = 'RGAPI-e674eb69-7d34-41d9-adfb-e43ad16950ca' #본인걸로 바꾸기
-seoul_api_key = '494e45546661707037397647657252'
+
 
 
 def get_df(url):
@@ -66,7 +66,7 @@ def get_rawdata(tier):
     for division in tqdm(division_list):
         url = f'https://kr.api.riotgames.com/lol/league/v4/entries/RANKED_SOLO_5x5/{tier}/{division}?page={page}&api_key={api_key}'
         res = requests.get(url).json()
-        lst += random.sample(res,1) # 테스트시 1 , 추후에 3으로 바꿔두기
+        lst += random.sample(res,3) # 테스트시 1 , 추후에 3으로 바꿔두기
     # lst라는 변수에서 summonerId만 리스트에 담기
     summoner_id_list = list(map(lambda x:x['summonerId'] ,lst))
     # summonerId가 담긴 리스트를 통해 puuId
