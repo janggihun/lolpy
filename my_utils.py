@@ -197,8 +197,53 @@ def insert_matches_timeline_mysql(row,conn):
     sql_execute(conn,query)
     return query
 
+def deletecheck() :#만든 전처리 과정용
+
+    column_list = ['gameId', 'gameDuration', 'gameVersion', 'summonerName', 'summonerLevel', 'participantId','championName', 'champLevel', 'champExperience', 
+                'teamPosition', 'teamId','ban', 'firstpurchased', 'win', 'gameEndedInEarlySurrender', 'firstBloodKill','doubleKills','tripleKills','quadraKills',
+                'pentaKills', 'kills', 'deaths', 'assists','kda','totalDamageDealtToChampions', 'totalDamageTaken']
 
 
+    conn = connect_mysql()
+
+    # 전체 데이터 중에서 빈칸을 전부다 삭제
+    for i in range(len(column_list)):
+        sql = (
+                f"select * from lol_datas where {column_list[i]} = '' and {column_list[i]} != 0 "
+            )
+        print(sql)
+        result = sql_execute(conn,sql)
+
+        print("빈칸이 있는 데이터의 수는 총 {}개 입니다.".format(len(result)))
+        
+        if result != '' :
+            for j in range(len(result)):
+                
+                sql1 = f"delete from lol_datas where gameId = {result[j].gameId}"
+                print(result[j].gameId)
+                result = sql_execute(conn,sql1)
+                print("삭제 완료된 데이터의 수는 총 {}개 입니다.".format(len(j)))
+
+
+    # Gameid가 10개가 아닌 게임번호를 삭제
+    sql3 = (
+            f"select gameId, count(gameId)  from lol_datas group by gameId having count(gameId) != 10 "    
+            )
+
+    result = sql_execute(conn,sql3)
+
+    print("칼럼이 10개단위가 아닌 데이터의 수는 총 {}개 입니다.".format(len(result)))
+    for i in range(len(result)):
+        print(result[i][0])
+        sql2 = (
+            f"delete from lol_datas where gameId = \'{result[i][0]}\'"
+            )
+        sql_execute(conn,sql2)
+
+    conn.commit()
+
+    print("삭제 완료되었습니다.")
+    conn.close()
 
 
 
