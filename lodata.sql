@@ -1,6 +1,12 @@
 create schema mydb;
 use mydb;
 
+CREATE USER 'icia'@'%' identified by '1234';
+
+GRANT ALL PRIVILEGES ON *.* to 'icia'@'%';
+flush privileges;
+SELECT Host,User,plugin,authentication_string FROM mysql.user;
+
 
 drop table lol_datas;
 desc lol_datas;
@@ -40,3 +46,17 @@ select * from lol_table ;
 
 
 
+
+
+select * from cn_en;
+
+
+select count(*) from lol_datas;
+
+
+create or replace view de as select gameId, count(gameId)  from lol_datas group by gameId having count(gameId) != 10;
+
+select COUNT(*) from lol_datas;
+
+select gameId,count(gameId)  from lol_datas group by gameId
+having count(gameId) != 10; 

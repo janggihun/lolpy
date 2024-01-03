@@ -5,38 +5,31 @@ import random
 from tqdm import tqdm
 import time
 
-api_key = 'RGAPI-e674eb69-7d34-41d9-adfb-e43ad16950ca' #본인걸로 바꾸기
+api_key = 'RGAPI-e674eb69-7d34-41d9-adfb-e43ad16950ca' #본인걸로 바꾸기 빅데이터과정 장기훈의 api입니다.
 
 
-
-def get_df(url):
-    url_re = url.replace('(인증키)', seoul_api_key).replace('xml', 'json').replace('/5/', '/1000/')
-    res = requests.get(url_re).json()
-    key = list(res.keys())[0]
-    df = pd.DataFrame(res[key]['row'])
-    return df
-
+# mysql 사용자지정
 def connect_mysql(db='mydb'):
     conn = pymysql.connect(host='localhost', port=3306,
-                           user='root', password='1234',
+                           user='icia', password='1234',
                            db=db, charset='utf8')
     return conn
 
-
+#쿼리 실행시구문
 def sql_execute(conn, query):
     cursor = conn.cursor()
     cursor.execute(query)
     result = cursor.fetchall()
     return result
 
-
+#딕셔너리만들때사용
 def sql_execute_dict(conn, query):
     cursor = conn.cursor(cursor=pymysql.cursors.DictCursor)
     cursor.execute(query)
     result = cursor.fetchall()
     return result
 
-
+## 여기서부터 롤입니다.
 def get_puuid(nickname, tag):
     url = f'https://asia.api.riotgames.com/riot/account/v1/accounts/by-riot-id/{nickname}/{tag}?api_key={api_key}'
     res = requests.get(url).json()
@@ -56,6 +49,8 @@ def get_matches_timelines(matchid):
     matches = requests.get(url1).json()
     timelines = requests.get(url2).json()
     return matches, timelines
+
+# 위 3개를 가지고 티어를 넣어서 raw데이터를 얻기
 
 def get_rawdata(tier):
     division_list = ['I','II','III','IV']
@@ -109,14 +104,14 @@ def get_match_timeline_df(df):
                     tmp.append(df.iloc[i].matches['info']['gameVersion'])
                     tmp.append(df.iloc[i].matches['info']['participants'][j]['summonerName'])
                     tmp.append(df.iloc[i].matches['info']['participants'][j]['summonerLevel'])
-                    tmp.append(df.iloc[i].matches['info']['participants'][j]['participantId'])
-                    tmp.append(df.iloc[i].matches['info']['participants'][j]['championName'])
+                    tmp.append(df.iloc[i].matches['info']['participants'][j]['participantId']) #1~10번까지 플레이어
+                    tmp.append(df.iloc[i].matches['info']['participants'][j]['championName'])# 흐웨이 추가완료
                     tmp.append(df.iloc[i].matches['info']['participants'][j]['champLevel']) #카사딘 레벨 알기위한 컬럼
-                    tmp.append(df.iloc[i].matches['info']['participants'][j]['champExperience'])
-                    tmp.append(df.iloc[i].matches['info']['participants'][j]['teamPosition'])
-                    tmp.append(df.iloc[i].matches['info']['participants'][j]['teamId'])
+                    tmp.append(df.iloc[i].matches['info']['participants'][j]['champExperience']) #겜끝났을때 경험치
+                    tmp.append(df.iloc[i].matches['info']['participants'][j]['teamPosition']) # 라인
+                    tmp.append(df.iloc[i].matches['info']['participants'][j]['teamId']) # 100 ,200
                     
-                    if j < 5:                
+                    if j < 5: # 각각 어느캐릭터를 밴했는지 확인하기 위해서 0~4배열 확인               
                         tmp.append(df.iloc[i].matches['info']['teams'][0]['bans'][j]['championId'])
                     else:
                         tmp.append(df.iloc[i].matches['info']['teams'][1]['bans'][j-5]['championId'])
@@ -137,14 +132,14 @@ def get_match_timeline_df(df):
                     tmp.append(df.iloc[i].matches['info']['participants'][j]['kills'])
                     tmp.append(df.iloc[i].matches['info']['participants'][j]['deaths'])
                     tmp.append(df.iloc[i].matches['info']['participants'][j]['assists'])
-                    
+
 
 
 
                     tmp.append(df.iloc[i].matches['info']['participants'][j]['challenges']['kda']) #kda값 가지고오기
                     
-                    tmp.append(df.iloc[i].matches['info']['participants'][j]['totalDamageDealtToChampions']) #총 때린 데미지
-                    tmp.append(df.iloc[i].matches['info']['participants'][j]['totalDamageTaken']) #총 맞은 데미지
+                    tmp.append(df.iloc[i].matches['info']['participants'][j]['totalDamageDealtToChampions']) #상대챔프에게 가한 데미지
+                    tmp.append(df.iloc[i].matches['info']['participants'][j]['totalDamageTaken']) #총 탱킹량
 
             #timeline 관련된 데이터
                     try:  
@@ -152,7 +147,7 @@ def get_match_timeline_df(df):
                     except:
                         tmp.append(0)
                     try:  
-                        tmp.append(df.iloc[i].timelines['info']['frames'][15]['participantFrames'][str(j+1)]['totalGold']) #15분 골드량
+                        tmp.append(df.iloc[i].timelines['info']['frames'][15]['participantFrames'][str(j+1)]['totalGold']) #15분 골드량 // 맨탈 확인용
                     except:
                         tmp.append(0)
                     try:  
@@ -175,7 +170,7 @@ def get_match_timeline_df(df):
     df = pd.DataFrame(df_creater,columns = columns).drop_duplicates()
     print('df 제작이 완료되었습니다. 현재 df의 수는 %d 입니다'%len(df))
     return df    
-
+    #총 칼럼수 31~32 필요한 칼럼으로 전칼럼 변경완료
 
 
 def insert_matches_timeline_mysql(row,conn):
@@ -201,3 +196,16 @@ def insert_matches_timeline_mysql(row,conn):
             )
     sql_execute(conn,query)
     return query
+
+
+
+
+
+
+
+
+
+
+
+
+    
