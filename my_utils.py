@@ -5,7 +5,7 @@ import random
 from tqdm import tqdm
 import time
 
-api_key = 'RGAPI-e674eb69-7d34-41d9-adfb-e43ad16950ca' #본인걸로 바꾸기 빅데이터과정 장기훈의 api입니다.
+api_key = '라이엇 api키' #본인걸로 바꾸기 빅데이터과정 
 
 
 # mysql 사용자지정
