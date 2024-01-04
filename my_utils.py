@@ -117,12 +117,12 @@ def get_match_timeline_df(df):
                         tmp.append(df.iloc[i].matches['info']['teams'][1]['bans'][j-5]['championId'])
 
 
-                    tmp.append(df.iloc[i].timelines['info']['frames'][1]['events'][0]['participantId']) #가장빨리 템을 산사람이 이기는거 확인                                    
+                    tmp.append(df.iloc[i].timelines['info']['frames'][1]['events'][0]['participantId']) #가장 빨리 템을 산사람이 이기는거 확인                                    
                     tmp.append(df.iloc[i].matches['info']['participants'][j]['win'])
                     tmp.append(df.iloc[i].matches['info']['participants'][j]['gameEndedInEarlySurrender']) # 15분 서렌 맨탈확인용  
                     tmp.append(df.iloc[i].matches['info']['participants'][j]['firstBloodKill'])  # 첫번째 킬 누가 했는지 확인       
 
-                    tmp.append(df.iloc[i].matches['info']['participants'][j]['doubleKills']) 
+                    tmp.append(df.iloc[i].matches['info']['participants'][j]['doubleKills']) # 향후 필요할거 같아서 추가
                     tmp.append(df.iloc[i].matches['info']['participants'][j]['tripleKills']) 
                     tmp.append(df.iloc[i].matches['info']['participants'][j]['quadraKills']) 
                     tmp.append(df.iloc[i].matches['info']['participants'][j]['pentaKills']) 
